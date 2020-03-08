@@ -7,6 +7,6 @@ export interface HelloProps {
 
 export class Hello extends React.Component<HelloProps, {}> {
     render() {
-        return <h1>Hello from bob!</h1>;
+        return <h1>Hello from Test!</h1>;
     }
 }
