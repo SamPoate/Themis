@@ -141,11 +141,13 @@ const semantic_ui_react_1 = __webpack_require__(/*! semantic-ui-react */ "./node
 const api_1 = __webpack_require__(/*! ../api/api */ "./frontend/src/api/api.js");
 exports.App = () => {
     const [fixed, setFixed] = react_1.useState(false);
+    const [apiCalled, setApiCalled] = react_1.useState(false);
     const [users, setUsers] = react_1.useState([]);
     const hideFixedMenu = () => setFixed(false);
     const showFixedMenu = () => setFixed(true);
     const callApi = () => __awaiter(void 0, void 0, void 0, function* () {
         const response = yield api_1.getRounds();
+        setApiCalled(true);
         setUsers(response.data.map((banana) => banana.name));
     });
     return (React.createElement(semantic_ui_react_1.Responsive, { minWidth: semantic_ui_react_1.Responsive.onlyTablet.minWidth },
@@ -162,9 +164,23 @@ exports.App = () => {
                         fontWeight: 'bold',
                         margin: '1em 0'
                     } }, "Who's round is it anyway?"))),
-        React.createElement(semantic_ui_react_1.Container, { text: true },
-            React.createElement(semantic_ui_react_1.Button, { onClick: callApi }, "Get Rounds"),
-            users.map(user => (React.createElement("p", { key: user }, user)))),
+        React.createElement(semantic_ui_react_1.Container, { text: true, textAlign: "left", style: { margin: '1em 0' } },
+            React.createElement(semantic_ui_react_1.Header, { as: "h2" }, "The Squad"),
+            apiCalled ? (React.createElement(semantic_ui_react_1.Table, { celled: true },
+                React.createElement(semantic_ui_react_1.Table.Header, null,
+                    React.createElement(semantic_ui_react_1.Table.Row, null,
+                        React.createElement(semantic_ui_react_1.Table.HeaderCell, null, "Their round?"),
+                        React.createElement(semantic_ui_react_1.Table.HeaderCell, null, "Who"),
+                        React.createElement(semantic_ui_react_1.Table.HeaderCell, null, "How many"))),
+                React.createElement(semantic_ui_react_1.Table.Body, null, users.map(user => (React.createElement(semantic_ui_react_1.Table.Row, { key: user },
+                    React.createElement(semantic_ui_react_1.Table.Cell, null,
+                        React.createElement(semantic_ui_react_1.Label, { ribbon: true }, "Yes")),
+                    React.createElement(semantic_ui_react_1.Table.Cell, null, user),
+                    React.createElement(semantic_ui_react_1.Table.Cell, null, user))))),
+                React.createElement(semantic_ui_react_1.Table.Footer, null,
+                    React.createElement(semantic_ui_react_1.Table.Row, null,
+                        React.createElement(semantic_ui_react_1.Table.HeaderCell, { colSpan: "3" },
+                            React.createElement(semantic_ui_react_1.Button, { onClick: () => setApiCalled(false) }, "Reset")))))) : (React.createElement(semantic_ui_react_1.Button, { onClick: callApi }, "Get Rounds"))),
         React.createElement(semantic_ui_react_1.Segment, { inverted: true, vertical: true, style: {
                 padding: '5em 0em',
                 position: 'fixed',

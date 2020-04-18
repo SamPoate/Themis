@@ -4,6 +4,8 @@ import { FunctionComponent, useState } from 'react';
 import {
     Container,
     Grid,
+    Table,
+    Label,
     List,
     Segment,
     Responsive,
@@ -21,6 +23,7 @@ export interface AppProps {
 
 export const App: FunctionComponent<AppProps> = () => {
     const [fixed, setFixed] = useState(false);
+    const [apiCalled, setApiCalled] = useState(false);
     const [users, setUsers] = useState([]);
 
     const hideFixedMenu = () => setFixed(false);
@@ -29,6 +32,7 @@ export const App: FunctionComponent<AppProps> = () => {
     const callApi = async () => {
         const response = await getRounds();
 
+        setApiCalled(true);
         setUsers(response.data.map((banana: { name: any }) => banana.name));
     };
 
@@ -73,11 +77,43 @@ export const App: FunctionComponent<AppProps> = () => {
                     </Header>
                 </Container>
             </Segment>
-            <Container text>
-                <Button onClick={callApi}>Get Rounds</Button>
-                {users.map(user => (
-                    <p key={user}>{user}</p>
-                ))}
+            <Container text textAlign="left" style={{ margin: '1em 0' }}>
+                <Header as="h2">The Squad</Header>
+                {apiCalled ? (
+                    <Table celled>
+                        <Table.Header>
+                            <Table.Row>
+                                <Table.HeaderCell>
+                                    Their round?
+                                </Table.HeaderCell>
+                                <Table.HeaderCell>Who</Table.HeaderCell>
+                                <Table.HeaderCell>How many</Table.HeaderCell>
+                            </Table.Row>
+                        </Table.Header>
+                        <Table.Body>
+                            {users.map(user => (
+                                <Table.Row key={user}>
+                                    <Table.Cell>
+                                        <Label ribbon>Yes</Label>
+                                    </Table.Cell>
+                                    <Table.Cell>{user}</Table.Cell>
+                                    <Table.Cell>{user}</Table.Cell>
+                                </Table.Row>
+                            ))}
+                        </Table.Body>
+                        <Table.Footer>
+                            <Table.Row>
+                                <Table.HeaderCell colSpan="3">
+                                    <Button onClick={() => setApiCalled(false)}>
+                                        Reset
+                                    </Button>
+                                </Table.HeaderCell>
+                            </Table.Row>
+                        </Table.Footer>
+                    </Table>
+                ) : (
+                    <Button onClick={callApi}>Get Rounds</Button>
+                )}
             </Container>
             <Segment
                 inverted
