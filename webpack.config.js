@@ -4,7 +4,7 @@ module.exports = {
     mode: 'development',
     devtool: 'source-map',
     resolve: {
-        extensions: ['.ts', '.tsx']
+        extensions: ['.js', '.ts', '.tsx']
     },
     module: {
         rules: [
@@ -16,6 +16,18 @@ module.exports = {
                         loader: 'ts-loader'
                     }
                 ]
+            },
+            {
+                test: /\.(s?)css$/i,
+                use: ['style-loader', 'css-loader']
+            },
+            {
+                test: /\.woff(2)?(\?v=[0-9]\.[0-9]\.[0-9])?$/,
+                loader: 'url-loader?limit=10000&mimetype=application/font-woff'
+            },
+            {
+                test: /\.(ttf|eot|svg|png)(\?v=[0-9]\.[0-9]\.[0-9])?$/,
+                loader: 'file-loader'
             },
             {
                 enforce: 'pre',

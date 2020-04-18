@@ -2,31 +2,29 @@
 import * as React from 'react';
 import { FunctionComponent, useState } from 'react';
 
+import { getRounds } from '../api/api';
+
 export interface AppProps {
     compiler: string;
     framework: string;
 }
 
-const getRounds = async () => {
-    return {
-        data: 'hello',
-    };
-};
-
 export const App: FunctionComponent<AppProps> = () => {
-    const [resp, setResp] = useState({});
+    const [users, setUsers] = useState([]);
 
     const callApi = async () => {
         const response = await getRounds();
 
-        setResp(response);
+        setUsers(response.data.map((banana: { name: any }) => banana.name));
     };
 
     return (
         <div>
-            <div className='ui huge header'>Who's round?</div>
+            <div className="ui huge header">Who's round?</div>
             <button onClick={callApi}>Get Rounds</button>
-            <p>{resp ? resp.toString() : ''}</p>
+            {users.map(user => (
+                <p key={user}>{user}</p>
+            ))}
         </div>
     );
 };
