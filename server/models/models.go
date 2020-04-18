@@ -2,8 +2,9 @@ package models
 
 import "go.mongodb.org/mongo-driver/bson/primitive"
 
-type ToDoList struct {
-	ID     primitive.ObjectID `json:"_id,omitempty" bson:"_id,omitempty"`
-	Task   string             `json:"task,omitempty"`
-	Status bool               `json:"status,omitempty"`
+// Rounds : Returns the current rounds
+type Rounds struct {
+	ID     primitive.ObjectID
+	Name   string
+	Status bool
 }

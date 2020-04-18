@@ -3,3 +3,4 @@ package-lock.json
 node_modules
 frontend/dist/main.js.map
 frontend/dist/main.js
+server/__debug_bin
