@@ -9,7 +9,8 @@ import (
 func Router() *mux.Router {
 	router := mux.NewRouter()
 
-	router.HandleFunc("/api/getRounds", middleware.GetAllRounds).Methods("GET", "OPTIONS")
+	router.HandleFunc("/api/users", middleware.GetUsers).Methods("GET", "OPTIONS")
+	router.HandleFunc("/api/user", middleware.CreateUser).Methods("POST", "OPTIONS")
 	// router.HandleFunc("/api/undoTask/{id}", middleware.UndoTask).Methods("PUT", "OPTIONS")
 	// router.HandleFunc("/api/deleteAllTask", middleware.DeleteAllTask).Methods("DELETE", "OPTIONS")
 	return router

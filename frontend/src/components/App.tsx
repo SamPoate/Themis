@@ -1,11 +1,13 @@
 // import React, { FunctionComponent, useState } from 'react';
 import * as React from 'react';
-import { FunctionComponent, useState } from 'react';
+import { FC, useState, useReducer } from 'react';
 import {
     Container,
     Grid,
     Table,
     Label,
+    Form,
+    Message,
     List,
     Segment,
     Responsive,
@@ -14,14 +16,42 @@ import {
     Button
 } from 'semantic-ui-react';
 
-import { getRounds } from '../api/api';
+import { getUsers, postUser } from '../api/api';
 
-export interface AppProps {
+interface AppProps {
     compiler: string;
     framework: string;
 }
 
-export const App: FunctionComponent<AppProps> = () => {
+interface UserState {
+    displayName: string;
+    username: string;
+    password: string;
+}
+
+interface Event {
+    name: string;
+    value: string;
+}
+
+const initialState: UserState = {
+    displayName: '',
+    username: '',
+    password: ''
+};
+
+export const reducer = (
+    state = initialState,
+    action: { type: string; payload: object }
+) => {
+    switch (action.type) {
+        default:
+            return { ...state, ...action.payload };
+    }
+};
+
+export const App: FC<AppProps> = () => {
+    const [state, dispatch] = useReducer(reducer, initialState);
     const [fixed, setFixed] = useState(false);
     const [apiCalled, setApiCalled] = useState(false);
     const [users, setUsers] = useState([]);
@@ -29,11 +59,29 @@ export const App: FunctionComponent<AppProps> = () => {
     const hideFixedMenu = () => setFixed(false);
     const showFixedMenu = () => setFixed(true);
 
+    const handleChange = (_e: any, { name, value }: Event) => {
+        dispatch({ type: 'default', payload: { [name]: value } });
+    };
+
     const callApi = async () => {
-        const response = await getRounds();
+        const response = await getUsers();
 
         setApiCalled(true);
-        setUsers(response.data.map((banana: { name: any }) => banana.name));
+        setUsers(
+            response.data.map(
+                (user: { display_name: string }) => user.display_name
+            )
+        );
+    };
+
+    const createUser = () => {
+        const { displayName, username, password } = state;
+
+        postUser({
+            displayName,
+            username,
+            password
+        });
     };
 
     return (
@@ -78,42 +126,99 @@ export const App: FunctionComponent<AppProps> = () => {
                 </Container>
             </Segment>
             <Container text textAlign="left" style={{ margin: '1em 0' }}>
-                <Header as="h2">The Squad</Header>
                 {apiCalled ? (
-                    <Table celled>
-                        <Table.Header>
-                            <Table.Row>
-                                <Table.HeaderCell>
-                                    Their round?
-                                </Table.HeaderCell>
-                                <Table.HeaderCell>Who</Table.HeaderCell>
-                                <Table.HeaderCell>How many</Table.HeaderCell>
-                            </Table.Row>
-                        </Table.Header>
-                        <Table.Body>
-                            {users.map(user => (
-                                <Table.Row key={user}>
-                                    <Table.Cell>
-                                        <Label ribbon>Yes</Label>
-                                    </Table.Cell>
-                                    <Table.Cell>{user}</Table.Cell>
-                                    <Table.Cell>{user}</Table.Cell>
+                    <>
+                        <Header as="h2">The Squad</Header>
+                        <Table celled>
+                            <Table.Header>
+                                <Table.Row>
+                                    <Table.HeaderCell>
+                                        Their round?
+                                    </Table.HeaderCell>
+                                    <Table.HeaderCell>Who</Table.HeaderCell>
+                                    <Table.HeaderCell>
+                                        How many
+                                    </Table.HeaderCell>
+                                    <Table.HeaderCell>
+                                        Set Round
+                                    </Table.HeaderCell>
                                 </Table.Row>
-                            ))}
-                        </Table.Body>
-                        <Table.Footer>
-                            <Table.Row>
-                                <Table.HeaderCell colSpan="3">
-                                    <Button onClick={() => setApiCalled(false)}>
-                                        Reset
-                                    </Button>
-                                </Table.HeaderCell>
-                            </Table.Row>
-                        </Table.Footer>
-                    </Table>
+                            </Table.Header>
+                            <Table.Body>
+                                {users.map(user => (
+                                    <Table.Row key={user}>
+                                        <Table.Cell>
+                                            <Label ribbon>Yes</Label>
+                                        </Table.Cell>
+                                        <Table.Cell>{user}</Table.Cell>
+                                        <Table.Cell>{user}</Table.Cell>
+                                        <Table.Cell>
+                                            <Button>Their Round</Button>
+                                        </Table.Cell>
+                                    </Table.Row>
+                                ))}
+                            </Table.Body>
+                            <Table.Footer>
+                                <Table.Row>
+                                    <Table.HeaderCell colSpan="3">
+                                        <Button
+                                            onClick={() => setApiCalled(false)}
+                                        >
+                                            Reset
+                                        </Button>
+                                    </Table.HeaderCell>
+                                </Table.Row>
+                            </Table.Footer>
+                        </Table>
+                    </>
                 ) : (
-                    <Button onClick={callApi}>Get Rounds</Button>
+                    <Grid textAlign="center" verticalAlign="middle">
+                        <Grid.Column>
+                            <Header as="h2" color="blue" textAlign="center">
+                                Create a User
+                            </Header>
+                            <Form size="large" onSubmit={createUser}>
+                                <Segment stacked>
+                                    <Form.Input
+                                        fluid
+                                        icon="glass martini"
+                                        iconPosition="left"
+                                        name="displayName"
+                                        placeholder="Display Name"
+                                        value={state.displayName}
+                                        onChange={handleChange}
+                                    />
+                                    <Form.Input
+                                        fluid
+                                        icon="user"
+                                        iconPosition="left"
+                                        name="username"
+                                        placeholder="Username"
+                                        value={state.username}
+                                        onChange={handleChange}
+                                    />
+                                    <Form.Input
+                                        fluid
+                                        icon="lock"
+                                        iconPosition="left"
+                                        name="password"
+                                        placeholder="Password"
+                                        type="password"
+                                        value={state.password}
+                                        onChange={handleChange}
+                                    />
+                                    <Form.Button content="Submit" />
+                                </Segment>
+                            </Form>
+                            <Message>
+                                New to us? <a href="#">Sign Up</a>
+                            </Message>
+                        </Grid.Column>
+                    </Grid>
                 )}
+                <Button style={{ margin: '1em 0' }} onClick={callApi}>
+                    Get Rounds
+                </Button>
             </Container>
             <Segment
                 inverted

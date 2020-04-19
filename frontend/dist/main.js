@@ -86,24 +86,34 @@
 /************************************************************************/
 /******/ ({
 
-/***/ "./frontend/src/api/api.js":
+/***/ "./frontend/src/api/api.ts":
 /*!*********************************!*\
-  !*** ./frontend/src/api/api.js ***!
+  !*** ./frontend/src/api/api.ts ***!
   \*********************************/
-/*! exports provided: getRounds */
-/***/ (function(module, __webpack_exports__, __webpack_require__) {
+/*! no static exports found */
+/***/ (function(module, exports, __webpack_require__) {
 
 "use strict";
-__webpack_require__.r(__webpack_exports__);
-/* harmony export (binding) */ __webpack_require__.d(__webpack_exports__, "getRounds", function() { return getRounds; });
-/* harmony import */ var axios__WEBPACK_IMPORTED_MODULE_0__ = __webpack_require__(/*! axios */ "./node_modules/axios/index.js");
-/* harmony import */ var axios__WEBPACK_IMPORTED_MODULE_0___default = /*#__PURE__*/__webpack_require__.n(axios__WEBPACK_IMPORTED_MODULE_0__);
 
-
-const endpoint = 'http://localhost:8080';
-
-const getRounds = async () =>
-    await axios__WEBPACK_IMPORTED_MODULE_0___default.a.get(endpoint + '/api/getRounds');
+var __awaiter = (this && this.__awaiter) || function (thisArg, _arguments, P, generator) {
+    function adopt(value) { return value instanceof P ? value : new P(function (resolve) { resolve(value); }); }
+    return new (P || (P = Promise))(function (resolve, reject) {
+        function fulfilled(value) { try { step(generator.next(value)); } catch (e) { reject(e); } }
+        function rejected(value) { try { step(generator["throw"](value)); } catch (e) { reject(e); } }
+        function step(result) { result.done ? resolve(result.value) : adopt(result.value).then(fulfilled, rejected); }
+        step((generator = generator.apply(thisArg, _arguments || [])).next());
+    });
+};
+var __importDefault = (this && this.__importDefault) || function (mod) {
+    return (mod && mod.__esModule) ? mod : { "default": mod };
+};
+Object.defineProperty(exports, "__esModule", { value: true });
+const axios_1 = __importDefault(__webpack_require__(/*! axios */ "./node_modules/axios/index.js"));
+const endpoint = 'http://127.0.0.1:8080';
+exports.getUsers = () => __awaiter(void 0, void 0, void 0, function* () { return yield axios_1.default.get(`${endpoint}/api/users`); });
+exports.postUser = (data) => __awaiter(void 0, void 0, void 0, function* () { return yield axios_1.default.post(`${endpoint}/api/user`, data); });
+exports.getRounds = () => __awaiter(void 0, void 0, void 0, function* () { return yield axios_1.default.get(`${endpoint}/api/rounds`); });
+exports.getTeams = () => __awaiter(void 0, void 0, void 0, function* () { return yield axios_1.default.get(`${endpoint}/api/teams`); });
 
 
 /***/ }),
@@ -138,18 +148,41 @@ Object.defineProperty(exports, "__esModule", { value: true });
 const React = __importStar(__webpack_require__(/*! react */ "react"));
 const react_1 = __webpack_require__(/*! react */ "react");
 const semantic_ui_react_1 = __webpack_require__(/*! semantic-ui-react */ "./node_modules/semantic-ui-react/dist/es/index.js");
-const api_1 = __webpack_require__(/*! ../api/api */ "./frontend/src/api/api.js");
+const api_1 = __webpack_require__(/*! ../api/api */ "./frontend/src/api/api.ts");
+const initialState = {
+    displayName: '',
+    username: '',
+    password: ''
+};
+exports.reducer = (state = initialState, action) => {
+    switch (action.type) {
+        default:
+            return Object.assign(Object.assign({}, state), action.payload);
+    }
+};
 exports.App = () => {
+    const [state, dispatch] = react_1.useReducer(exports.reducer, initialState);
     const [fixed, setFixed] = react_1.useState(false);
     const [apiCalled, setApiCalled] = react_1.useState(false);
     const [users, setUsers] = react_1.useState([]);
     const hideFixedMenu = () => setFixed(false);
     const showFixedMenu = () => setFixed(true);
+    const handleChange = (_e, { name, value }) => {
+        dispatch({ type: 'default', payload: { [name]: value } });
+    };
     const callApi = () => __awaiter(void 0, void 0, void 0, function* () {
-        const response = yield api_1.getRounds();
+        const response = yield api_1.getUsers();
         setApiCalled(true);
-        setUsers(response.data.map((banana) => banana.name));
+        setUsers(response.data.map((user) => user.display_name));
     });
+    const createUser = () => {
+        const { displayName, username, password } = state;
+        api_1.postUser({
+            displayName,
+            username,
+            password
+        });
+    };
     return (React.createElement(semantic_ui_react_1.Responsive, { minWidth: semantic_ui_react_1.Responsive.onlyTablet.minWidth },
         React.createElement(semantic_ui_react_1.Segment, { inverted: true, textAlign: "center", style: { padding: '1em 0em' }, vertical: true },
             React.createElement(semantic_ui_react_1.Container, null,
@@ -165,22 +198,38 @@ exports.App = () => {
                         margin: '1em 0'
                     } }, "Who's round is it anyway?"))),
         React.createElement(semantic_ui_react_1.Container, { text: true, textAlign: "left", style: { margin: '1em 0' } },
-            React.createElement(semantic_ui_react_1.Header, { as: "h2" }, "The Squad"),
-            apiCalled ? (React.createElement(semantic_ui_react_1.Table, { celled: true },
-                React.createElement(semantic_ui_react_1.Table.Header, null,
-                    React.createElement(semantic_ui_react_1.Table.Row, null,
-                        React.createElement(semantic_ui_react_1.Table.HeaderCell, null, "Their round?"),
-                        React.createElement(semantic_ui_react_1.Table.HeaderCell, null, "Who"),
-                        React.createElement(semantic_ui_react_1.Table.HeaderCell, null, "How many"))),
-                React.createElement(semantic_ui_react_1.Table.Body, null, users.map(user => (React.createElement(semantic_ui_react_1.Table.Row, { key: user },
-                    React.createElement(semantic_ui_react_1.Table.Cell, null,
-                        React.createElement(semantic_ui_react_1.Label, { ribbon: true }, "Yes")),
-                    React.createElement(semantic_ui_react_1.Table.Cell, null, user),
-                    React.createElement(semantic_ui_react_1.Table.Cell, null, user))))),
-                React.createElement(semantic_ui_react_1.Table.Footer, null,
-                    React.createElement(semantic_ui_react_1.Table.Row, null,
-                        React.createElement(semantic_ui_react_1.Table.HeaderCell, { colSpan: "3" },
-                            React.createElement(semantic_ui_react_1.Button, { onClick: () => setApiCalled(false) }, "Reset")))))) : (React.createElement(semantic_ui_react_1.Button, { onClick: callApi }, "Get Rounds"))),
+            apiCalled ? (React.createElement(React.Fragment, null,
+                React.createElement(semantic_ui_react_1.Header, { as: "h2" }, "The Squad"),
+                React.createElement(semantic_ui_react_1.Table, { celled: true },
+                    React.createElement(semantic_ui_react_1.Table.Header, null,
+                        React.createElement(semantic_ui_react_1.Table.Row, null,
+                            React.createElement(semantic_ui_react_1.Table.HeaderCell, null, "Their round?"),
+                            React.createElement(semantic_ui_react_1.Table.HeaderCell, null, "Who"),
+                            React.createElement(semantic_ui_react_1.Table.HeaderCell, null, "How many"),
+                            React.createElement(semantic_ui_react_1.Table.HeaderCell, null, "Set Round"))),
+                    React.createElement(semantic_ui_react_1.Table.Body, null, users.map(user => (React.createElement(semantic_ui_react_1.Table.Row, { key: user },
+                        React.createElement(semantic_ui_react_1.Table.Cell, null,
+                            React.createElement(semantic_ui_react_1.Label, { ribbon: true }, "Yes")),
+                        React.createElement(semantic_ui_react_1.Table.Cell, null, user),
+                        React.createElement(semantic_ui_react_1.Table.Cell, null, user),
+                        React.createElement(semantic_ui_react_1.Table.Cell, null,
+                            React.createElement(semantic_ui_react_1.Button, null, "Their Round")))))),
+                    React.createElement(semantic_ui_react_1.Table.Footer, null,
+                        React.createElement(semantic_ui_react_1.Table.Row, null,
+                            React.createElement(semantic_ui_react_1.Table.HeaderCell, { colSpan: "3" },
+                                React.createElement(semantic_ui_react_1.Button, { onClick: () => setApiCalled(false) }, "Reset"))))))) : (React.createElement(semantic_ui_react_1.Grid, { textAlign: "center", verticalAlign: "middle" },
+                React.createElement(semantic_ui_react_1.Grid.Column, null,
+                    React.createElement(semantic_ui_react_1.Header, { as: "h2", color: "blue", textAlign: "center" }, "Create a User"),
+                    React.createElement(semantic_ui_react_1.Form, { size: "large", onSubmit: createUser },
+                        React.createElement(semantic_ui_react_1.Segment, { stacked: true },
+                            React.createElement(semantic_ui_react_1.Form.Input, { fluid: true, icon: "glass martini", iconPosition: "left", name: "displayName", placeholder: "Display Name", value: state.displayName, onChange: handleChange }),
+                            React.createElement(semantic_ui_react_1.Form.Input, { fluid: true, icon: "user", iconPosition: "left", name: "username", placeholder: "Username", value: state.username, onChange: handleChange }),
+                            React.createElement(semantic_ui_react_1.Form.Input, { fluid: true, icon: "lock", iconPosition: "left", name: "password", placeholder: "Password", type: "password", value: state.password, onChange: handleChange }),
+                            React.createElement(semantic_ui_react_1.Form.Button, { content: "Submit" }))),
+                    React.createElement(semantic_ui_react_1.Message, null,
+                        "New to us? ",
+                        React.createElement("a", { href: "#" }, "Sign Up"))))),
+            React.createElement(semantic_ui_react_1.Button, { style: { margin: '1em 0' }, onClick: callApi }, "Get Rounds")),
         React.createElement(semantic_ui_react_1.Segment, { inverted: true, vertical: true, style: {
                 padding: '5em 0em',
                 position: 'fixed',
