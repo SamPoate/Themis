@@ -19,12 +19,12 @@ func Router() *mux.Router {
 	// api.HandleFunc("/deleteAllTask", middleware.DeleteAllTask).Methods("DELETE", "OPTIONS")
 
 	// Serve static files
-	router.PathPrefix("/").Handler(http.StripPrefix("/", http.FileServer(http.Dir("../frontend/dist/"))))
+	router.PathPrefix("/").Handler(http.FileServer(http.Dir("../frontend/dist/")))
 
 	// Serve index page on all unhandled routes
-	router.PathPrefix("/").HandlerFunc(func(w http.ResponseWriter, r *http.Request) {
-		http.ServeFile(w, r, "../frontend/dist/index.html")
-	})
+	// router.PathPrefix("/").HandlerFunc(func(w http.ResponseWriter, r *http.Request) {
+	// 	http.ServeFile(w, r, "../frontend/dist/index.html")
+	// })
 
 	return router
 }
