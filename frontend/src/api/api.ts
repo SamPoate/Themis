@@ -1,6 +1,6 @@
 import axios from 'axios';
 
-const endpoint = 'http://127.0.0.1:8080';
+const endpoint = 'http://localhost:8080';
 
 export const getUsers = async () => await axios.get(`${endpoint}/api/users`);
 export const postUser = async (data: Object) =>

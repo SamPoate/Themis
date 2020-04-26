@@ -44,9 +44,9 @@ module.exports = {
     output: {
         path: path.resolve(__dirname, './frontend/dist/'),
         filename: 'main.js'
-    },
-    externals: {
-        react: 'React',
-        'react-dom': 'ReactDOM'
     }
+    // externals: {
+    // react: 'React',
+    // 'react-dom': 'ReactDOM'
+    // }
 };
